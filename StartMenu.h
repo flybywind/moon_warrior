@@ -15,6 +15,11 @@ public:
     void newGame(cocos2d::Ref* pSender);
     // implement the "static create()" method manually
     CREATE_FUNC(StartMenu);
+    
+    void update(float dt);
+private:
+    cocos2d::Sprite* spShip;
+    cocos2d::Size visibleSize;
 };
 
 #endif // __STARTMENU_SCENE_H__

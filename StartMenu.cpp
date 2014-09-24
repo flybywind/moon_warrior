@@ -1,6 +1,7 @@
 #include "StartMenu.h"
 #include "SimpleAudioEngine.h"
 #include "Resource.h"
+
 //#include "GameLayer.h"
 USING_NS_CC;
 using namespace CocosDenshion;
@@ -30,12 +31,15 @@ bool StartMenu::init()
         return false;
     }
     
-    Size visibleSize = Director::getInstance()->getVisibleSize();
+    visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
+    // add child, determin child order
+    auto logoZorder = 4;
+    auto loadZorder = 0;
+    auto menuZorder = 2;
+    auto shipZorder = 1;
 
     // 还是用驼峰命名法吧：
     Sprite *sp_load = Sprite::create(s_loading);
@@ -43,10 +47,10 @@ bool StartMenu::init()
     // 不设AnchorPoint，sprite默认是中点
     sp_load->setPosition(Vec2(visibleSize.width/2, visibleSize.height/2));
     // zorder决定了layer顺序，越大的越靠上，就会掩盖zorder小的
-    addChild(sp_load, 0);
+    addChild(sp_load, loadZorder);
     sp_logo->setAnchorPoint(Vec2(0.5, 1));
     sp_logo->setPosition(Vec2(visibleSize.width/2, visibleSize.height*0.8));
-    addChild(sp_logo, 10);
+    addChild(sp_logo, logoZorder);
     
     Sprite * sp_new_game_crate = Sprite::create(s_menu, Rect(0, 0, 126,33));
     Sprite * sp_new_game_sel = Sprite::create(s_menu, Rect(0, 33, 126, 33));
@@ -54,17 +58,12 @@ bool StartMenu::init()
     
     auto new_game = MenuItemSprite::create(sp_new_game_crate, sp_new_game_sel, CC_CALLBACK_1(StartMenu::newGame, this));
     auto menu = Menu::createWithItem(new_game);
-    this->addChild(menu, 1);
+    this->addChild(menu, menuZorder);
     menu->alignItemsVertically();
 
     menu->setPosition(visibleSize.width/2,
                       sp_logo->getPosition().y - sp_logo->getContentSize().height - 33);
 
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
     
     auto label = LabelTTF::create("飞机大战", "Arial", 24);
     
@@ -74,6 +73,16 @@ bool StartMenu::init()
 
     // add the label as a child to this layer
     this->addChild(label, 1);
+    
+    // add ship flying around
+    auto shipCache = TextureCache::getInstance()->addImage(s_ship01);
+    spShip = Sprite::createWithTexture(shipCache, Rect(0, 45, 60, 38));
+    addChild(spShip, shipZorder);
+    spShip->setPosition(Vec2(spShip->getContentSize().width/2, 40));
+    // MoveBy 就是一个slid的效果，duration表示动作持续时间，越小速度越快。delta表示位移，表示在duration时间内移动多少
+    // 实现了一个左右摇摆的效果
+    spShip->runAction(MoveBy::create(3, Vec2(visibleSize.width - spShip->getContentSize().width, 0)));
+    schedule(schedule_selector(StartMenu::update), 3);
     return true;
 }
 
@@ -87,4 +96,18 @@ void StartMenu::newGame(Ref* pSender)
     auto scene = Scene::create();
 //    scene->addChild(GameLayer::create());
     Director::getInstance()->replaceScene(scene);
+}
+
+
+void StartMenu::update(float dt)
+{
+    auto mid_loc = visibleSize.width/2.0;
+    if (mid_loc > spShip->getPosition().x) {
+        // 当前位置加上delta偏移量，就是下次的位置
+        // 尝试setAnchorPoint，会有抖动。不好看
+        // 注意这里的时间，要和schedule的时间匹配
+        spShip->runAction(MoveBy::create(3, Vec2(visibleSize.width - spShip->getContentSize().width, 0)));
+    } else {
+        spShip->runAction(MoveBy::create(3, Vec2(-visibleSize.width + spShip->getContentSize().width, 0)));
+    }
 }
