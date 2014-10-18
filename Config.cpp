@@ -8,9 +8,9 @@
 
 #include "Config.h"
 
-CCArray *play_bullet;
-CCArray *enemy_bullet;
-CCArray *enemy_items;
+Array *play_bullet;
+Array *enemy_bullet;
+Array *enemy_items;
 
 static  Config *g_config = NULL;
 
@@ -90,7 +90,6 @@ Config::~Config()
     enemy_items = NULL;
     play_bullet = NULL;
     enemy_bullet = NULL;
-    CCLOG("release config");
 
 }
 

@@ -2,15 +2,11 @@
 //  Ship.h
 //  MoonWarriorsx
 //
-//  Created by 王 磊 on 12-12-29.
-//
-//
-
 #ifndef __MoonWarriorsx__Ship__
 #define __MoonWarriorsx__Ship__
 
 #include "cocos2d.h"
-//#include "UnitSprite.h"
+#include "UnitSprite.h"
 USING_NS_CC;
 
 class Ship : public UnitSprite{
@@ -43,16 +39,16 @@ private:
     int m_maxBulletPowerValue;
     
     // 出现的初始位置
-    CCPoint m_appearPosition;
+    Vec2 m_appearPosition;
     int m_hurtColorLife;
     bool m_active;
-    
+    static TextureCache * g_texture_cache;
 public:
     Ship();
     ~Ship();
-    
+    static Vec2 BornPosition;
     // 被攻击使能
-    void makeAttack(CCNode *pSender);
+    void makeAttack();
     
     // 更新
     virtual void update(float dt);
@@ -73,10 +69,8 @@ public:
     virtual bool isActive();
     
     // 碰撞矩形
-    virtual CCRect collideRect();
+    virtual Rect collideRect();
     int getZoder();
-    
-    // 构造器
     CREATE_FUNC(Ship);
 };
 

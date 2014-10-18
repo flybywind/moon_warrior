@@ -22,7 +22,7 @@ bool isPaused = false;
 GameLayer::GameLayer():
     m_state(Playing),
     m_time(0),
-    /*m_ship(NULL),*/
+    m_ship(NULL),
     m_backSky(NULL),
     m_backSkyHeight(0),
     m_backSkyRe(NULL),
@@ -104,8 +104,10 @@ bool GameLayer::init()
     addChild(m_lifeCount, 1000);
     
     // ship
-    //m_ship = Ship::create();
-    //addChild(m_ship, m_ship->getZoder(), 1001);
+    Ship::BornPosition = Vec2(winSize.x/2, winSize.y/2);
+    m_ship = Ship::create();
+    
+    addChild(m_ship, m_ship->getZoder(), 1001);
     
     MenuItemImage *pause = MenuItemImage::create("pause.png", "pause.png",
                                                  CC_CALLBACK_1(GameLayer::doPause, this));
@@ -125,7 +127,11 @@ bool GameLayer::init()
     if (Config::sharedConfig()->getAudioState()) {
         SimpleAudioEngine::getInstance()->playBackgroundMusic(s_bgMusic, true);
     }
-    
+    // 单点触控监听：
+    auto listener = EventListenerTouchOneByOne::create();
+    listener->onTouchMoved = CC_CALLBACK_2(GameLayer::TouchMoved, this);
+    listener->onTouchBegan = CC_CALLBACK_2(GameLayer::TouchBegan, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     return true;
 }
 
@@ -134,9 +140,9 @@ bool GameLayer::init()
 void GameLayer::update(float dt)
 {
     if (m_state == Playing) {
-//        checkIsCollide();
-//        removeInactiveUnit(dt);
-//        checkIsReborn();
+        checkIsCollide();
+        removeInactiveUnit(dt);
+        checkIsReborn();
         updateUI();
     }
     
@@ -150,114 +156,112 @@ void GameLayer::update(float dt)
 //    }
 //}
 
-//void GameLayer::checkIsCollide()
-//{
-//    CCObject *units;
-//    CCObject *bullets;
-//    CCObject *enemybs;
-//    FOREACH(enemy_items, units)
-//    {
-//        UnitSprite *enemy = dynamic_cast<UnitSprite*>(units);
-//        Array_FOREACH(play_bullet, bullets)
-//        {
-//            UnitSprite *bullet = dynamic_cast<UnitSprite*>(bullets);
-//            if (this->collide(enemy, bullet)) {
-//                enemy->hurt();
-//                bullet->hurt();
-//            }
-//            if (!(m_screenRec.intersectsRect(bullet->boundingBox()))) {
-//                bullet->destroy();
-//            }
-//        }
-//        if (collide(enemy, m_ship)) {
-//            if (m_ship->isActive()) {
-//                enemy->hurt();
-//                m_ship->hurt();
-//            }
-//            
-//        }
-//        if (!(m_screenRec.intersectsRect(enemy->boundingBox()))) {
-//            enemy->destroy();
-//        }
-//    }
-//    
-//    Array_FOREACH(enemy_bullet, enemybs)
-//    {
-//        UnitSprite *enemyb = dynamic_cast<UnitSprite*>(enemybs);
-//        if (enemyb) {
-//            if (collide(enemyb, m_ship)) {
-//                if (m_ship->isActive()) {
-//                    enemyb->hurt();
-//                    m_ship->hurt();
-//                }
-//            }
-//            if (!m_screenRec.intersectsRect(enemyb->boundingBox())) {
-//                enemyb->destroy();
-//            }
-//        }
-//        
-//    }
-//}
+void GameLayer::checkIsCollide()
+{
+    Ref *units;
+    Ref *bullets;
+    Ref *enemybs;
+    CCARRAY_FOREACH(enemy_items, units)
+    {
+        UnitSprite *enemy = dynamic_cast<UnitSprite*>(units);
+        CCARRAY_FOREACH(play_bullet, bullets)
+        {
+            UnitSprite *bullet = dynamic_cast<UnitSprite*>(bullets);
+            if (this->collide(enemy, bullet)) {
+                enemy->hurt();
+                bullet->hurt();
+            }
+            if (!(m_screenRec.intersectsRect(bullet->boundingBox()))) {
+                bullet->destroy();
+            }
+        }
+        if (collide(enemy, m_ship)) {
+            if (m_ship->isActive()) {
+                enemy->hurt();
+                m_ship->hurt();
+            }
+            
+        }
+        if (!(m_screenRec.intersectsRect(enemy->boundingBox()))) {
+            enemy->destroy();
+        }
+    }
+    
+    CCARRAY_FOREACH(enemy_bullet, enemybs)
+    {
+        UnitSprite *enemyb = dynamic_cast<UnitSprite*>(enemybs);
+        if (enemyb) {
+            if (collide(enemyb, m_ship)) {
+                if (m_ship->isActive()) {
+                    enemyb->hurt();
+                    m_ship->hurt();
+                }
+            }
+            if (!m_screenRec.intersectsRect(enemyb->boundingBox())) {
+                enemyb->destroy();
+            }
+        }
+        
+    }
+}
 
-//void GameLayer::removeInactiveUnit(float dt)
-//{
-//        
-//    Array *children = this->getChildren();
-//    for (int i = 0; i < children->count(); ++i) {
-//        Sprite *selChild =  dynamic_cast<Sprite*>(children->objectAtIndex(i));
-//        if (selChild) {
-//            selChild->update(dt);
-//            int tag = selChild->getTag();
-//            if (( tag == 900) || (tag == 901 )|| (tag == 1000)) {
-//                if (!((UnitSprite*)selChild)->isActive()) {
-//                    ((UnitSprite*)selChild)->destroy();
-//                }
-//            }
-//        }
-//    }
-//    
-//    if (m_ship) {
-//        if (!m_ship->isActive()) {
-//            m_ship->destroy();
-//            m_ship = NULL;
-//        }
-//    }
-//    
-//}
+void GameLayer::removeInactiveUnit(float dt)
+{
+        
+    auto children = this->getChildren();
+    for (int i = 0; i < children.size(); ++i) {
+        Sprite *selChild =  dynamic_cast<Sprite*>(children.at(i));
+        if (selChild) {
+            selChild->update(dt);
+            int tag = selChild->getTag();
+            if (( tag == 900) || (tag == 901 )|| (tag == 1000)) {
+                if (!((UnitSprite*)selChild)->isActive()) {
+                    ((UnitSprite*)selChild)->destroy();
+                }
+            }
+        }
+    }
+    
+    if (m_ship) {
+        if (!m_ship->isActive()) {
+            m_ship->destroy();
+            m_ship = NULL;
+        }
+    }
+    
+}
 
-//void GameLayer::checkIsReborn()
-//{    
-//    if (Config::sharedConfig()->getLifeCount() > 0) {
-//        if (!m_ship) {
-//            
-//                m_ship = Ship::create();
-//                this->addChild(m_ship, m_ship->getZoder(), 1001);
-//        }
-//        
-//    }
-//    else if (Config::sharedConfig()->getLifeCount() <= 0 ) {
-//        m_state = stateGameOver;
-//        m_ship = NULL;
-//        CCCallFunc *gameOver = CCCallFunc::create(this, callfunc_selector(GameLayer::gameOver));
-//        this->runAction(CCSequence::create(CCDelayTime::create(0.2), gameOver, NULL));
-//    }
-//    
-//}
+void GameLayer::checkIsReborn()
+{    
+    if (Config::sharedConfig()->getLifeCount() > 0) {
+        if (!m_ship) {
+            m_ship = Ship::create();
+            this->addChild(m_ship, m_ship->getZoder(), 1001);
+        }
+        
+    } else if (Config::sharedConfig()->getLifeCount() <= 0 ) {
+        m_state = GameOver;
+        m_ship = NULL;
+        //CallFunc *gameOver = CallFunc::create(this, callfunc_selector(GameLayer::gameOver));
+        //this->runAction(CCSequence::create(CCDelayTime::create(0.2), gameOver, NULL));
+    }
+    
+}
 
-//bool GameLayer::collide(UnitSprite *a, UnitSprite *b)
-//{
-//    if(!a || !b)
-//    {
-//        return false;
-//    }
-//    CCRect aRect = a->collideRect();
-//    CCRect bRect = b->collideRect();
-//    if (aRect.intersectsRect(bRect)) {
-//        return true;
-//    }
-//    return false;
-//}
-//
+bool GameLayer::collide(UnitSprite *a, UnitSprite *b)
+{
+    if(!a || !b)
+    {
+        return false;
+    }
+    Rect aRect = a->collideRect();
+    Rect bRect = b->collideRect();
+    if (aRect.intersectsRect(bRect)) {
+        return true;
+    }
+    return false;
+}
+
 void GameLayer::updateUI()
 {
     if (m_tempScore < Config::sharedConfig()->getScoreValue()) {
@@ -273,42 +277,37 @@ void GameLayer::updateUI()
     
 }
 
-void GameLayer::onEnter()
-{
+//void GameLayer::onEnter()
+//{
 //    CCDirector* pDirector = CCDirector::sharedDirector();
-//    pDirector->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
-    Layer::onEnter();
-}
-
-void GameLayer::onExit()
-{
-//    CCDirector* pDirector = CCDirector::sharedDirector();
-//    pDirector->getTouchDispatcher()->removeDelegate(this);
-    Layer::onExit();
-}
-
-
-bool GameLayer::TouchBegan(CCTouch *touch, CCEvent *event)
+//    pDirector->addTargetedDelegate(this, 0, true);
+//    Layer::onEnter();
+//}
+//
+//void GameLayer::onExit()
+//{
+////    CCDirector* pDirector = CCDirector::sharedDirector();
+////    pDirector->getTouchDispatcher()->removeDelegate(this);
+//    Layer::onExit();
+//}
+//
+//
+bool GameLayer::TouchBegan(Touch *touch, Event *event)
 {
     log("touch began!");
     return true;
 }
 
-//void GameLayer::TouchMoved(cocos2d::CCTouch *touch, cocos2d::CCEvent *event)
-//{
-//    if ((m_state == statePlaying) && m_ship) {
-//    CCPoint pos = touch->getDelta();
-//    CCPoint currentPos = m_ship->getPosition();
-//    currentPos = ccpAdd(currentPos, pos);
-//    currentPos = ccpClamp(currentPos, CCPointZero, Vec2(winSize.x, winSize.y));
-//    m_ship->setPosition(currentPos);
-//    }
-//    
-//}
-
-void GameLayer::TouchEnded(cocos2d::CCTouch *touch, cocos2d::CCEvent *event)
+void GameLayer::TouchMoved(Touch *touch, Event *event)
 {
-    log("touch end!");
+    if ((m_state == Playing) && m_ship) {
+        Vec2 pos = touch->getDelta();
+        Vec2 currentPos = m_ship->getPosition();
+        currentPos = currentPos + pos;
+        currentPos = currentPos.getClampPoint(Vec2::ZERO, Vec2(winSize.x, winSize.y));
+        m_ship->setPosition(currentPos);
+    }
+    
 }
 
 // 无限滚动地图，采用两张图循环加载滚动
@@ -347,7 +346,6 @@ void GameLayer::movingBackground(float)
     // 每次移动200
     m_backTileMapHeight -= 200;
     
-    log("backsky location-y: %f", m_backSky->getPosition().y);
     // m_backSkyHeight表示back图片最上缘的位置，开始等于576，initBackground里面move一次
     // 变成528，此处又move一次，正好变成480，等于图像高度。此时如果不加入第二张图片，上部将出现
     // 黑色背景，变得很难看
