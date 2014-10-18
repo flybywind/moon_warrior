@@ -2,7 +2,7 @@
 #include "SimpleAudioEngine.h"
 #include "Resource.h"
 
-//#include "GameLayer.h"
+#include "GameLayer.h"
 USING_NS_CC;
 using namespace CocosDenshion;
 
@@ -94,7 +94,7 @@ void StartMenu::newGame(Ref* pSender)
     // 说明文件才正确地加入到project了。否则会提示无法找到文件
     SimpleAudioEngine::getInstance()->playEffect(s_buttonEffect);
     auto scene = Scene::create();
-//    scene->addChild(GameLayer::create());
+    scene->addChild(GameLayer::create());
     Director::getInstance()->replaceScene(scene);
 }
 

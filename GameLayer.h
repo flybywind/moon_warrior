@@ -1,6 +1,6 @@
 //
 //  GameLayer.h
-//  MoonWarriors
+//  MoonWarriorsx
 //
 //  Created by flybywind on 14-9-23.
 //
@@ -10,8 +10,9 @@
 #define MoonWarriors_GameLayer_h
 
 #include "cocos2d.h"
-#include "Ship.h"
-#include "LevelManager.h"
+//#include "Ship.h"
+//#include "LevelManager.h"
+
 USING_NS_CC;
 
 enum GameState{
@@ -27,16 +28,16 @@ private:
     cocos2d::Sprite *m_backSkyRe;
     cocos2d::Sprite * m_backSky;
     
-    Ship *m_ship;
+    //Ship *m_ship;
     int m_state;
     int m_time;
     float m_backSkyHeight;
     float m_backTileMapHeight;
     
-    CCTMXTiledMap *m_backTileMap;
-    CCTMXTiledMap *m_backTileMapRe;
-    CCLabelBMFont *m_lbScore;
-    CCLabelTTF *m_lifeCount;
+    TMXTiledMap *m_backTileMap;
+    TMXTiledMap *m_backTileMapRe;
+    LabelBMFont *m_lbScore;
+    LabelTTF *m_lifeCount;
     cocos2d::Rect m_screenRec;
 //    LevelManager *m_levelManager;
     
@@ -51,21 +52,22 @@ public:
     virtual bool init();
     virtual void update(float dt);
     void scoreCounter();
-    Ship* getShip();
-    void checkIsCollide();
-    void removeInactiveUnit(float dt);
-    void checkIsReborn();
-    bool collide(UnitSprite *a, UnitSprite *b);
+    //Ship* getShip();
+//    void checkIsCollide();
+//    void removeInactiveUnit(float dt);
+//    void checkIsReborn();
+//    bool collide(UnitSprite *a, UnitSprite *b);
     void updateUI();
     void gameOver();
-    void doPause(CCObject *pSender);
+    void doPause(cocos2d::Ref *pSender);
     virtual void onEnter();
     virtual void onExit();
     void initBackground();
-    void movingBackground();
-    virtual bool ccTouchBegan(CCTouch* touch, CCEvent* event);
-    virtual void ccTouchMoved(CCTouch* touch, CCEvent* event);
-    virtual void ccTouchEnded(CCTouch* touch, CCEvent* event);
+    void movingBackground(float);
+    virtual bool TouchBegan(Touch* touch, Event* event);
+//    virtual void TouchMoved(Touch* touch, Event* event);
+    virtual void TouchEnded(Touch* touch, Event* event);
     CREATE_FUNC(GameLayer);
 };
-#endif
+
+#endif /* defined(__MoonWarriorsx__GameLayer__) */

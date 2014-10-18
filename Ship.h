@@ -10,7 +10,7 @@
 #define __MoonWarriorsx__Ship__
 
 #include "cocos2d.h"
-#include "UnitSprite.h"
+//#include "UnitSprite.h"
 USING_NS_CC;
 
 class Ship : public UnitSprite{

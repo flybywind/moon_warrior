@@ -13,9 +13,9 @@
 USING_NS_CC;
 using namespace std;
 
-extern cocos2d::CCArray *play_bullet;
-extern cocos2d::CCArray *enemy_bullet;
-extern cocos2d::CCArray *enemy_items;
+extern cocos2d::Array *play_bullet;
+extern cocos2d::Array *enemy_bullet;
+extern cocos2d::Array *enemy_items;
 
 typedef struct Enemies
 {
@@ -42,7 +42,7 @@ typedef struct {
     int scoreValue;
 }EnemyType;
 
-class Config : public CCObject{
+class Config : public Ref{
 private:
     vector<EnemyInfo> m_enemies;
     vector<EnemyType> m_enemyTypes;
