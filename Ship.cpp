@@ -10,7 +10,7 @@
 #include "Resource.h"
 #include "Bullet.h"
 #include "Config.h"
-//#include "Effect.h"
+#include "Effect.h"
 #include "SimpleAudioEngine.h"
 
 
@@ -160,8 +160,8 @@ void Ship::destroy()
 
     CCLOG("life count is %d",Config::sharedConfig()->getLifeCount());
     
-//    Effect *effect = Effect::create();    
-//    effect->explode(this->getParent(), this->getPosition());
+    Effect *effect = Effect::create();    
+    effect->explode(this->getParent(), this->getPosition());
 
     this->removeFromParent();
     if (Config::sharedConfig()->getAudioState()){

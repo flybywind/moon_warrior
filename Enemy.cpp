@@ -9,7 +9,7 @@
 #include "Bullet.h"
 #include "Config.h"
 #include "SimpleAudioEngine.h"
-//#include "Effect.h"
+#include "Effect.h"
 
 using namespace CocosDenshion;
 
@@ -87,12 +87,9 @@ void Enemy::destroy()
     Config::sharedConfig()->setScoreValue(m_scoreValue );
 
     // 爆炸特效和闪光特效
-//    Effect *effect = Effect::create();
-//    
-//    effect->explode(this->getParent(), getPosition());
-//    
-//    effect->spark(this->getPosition(),this->getParent(), 1.2, 0.7);
-//    
+    Effect *effect = Effect::create();
+    effect->explode(this->getParent(), getPosition());
+    effect->spark(this->getPosition(),this->getParent(), 1.2, 0.7);
     // 敌机爆炸，从敌机数组删除
     enemy_items->removeObject(this);
     

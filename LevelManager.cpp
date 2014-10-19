@@ -28,17 +28,18 @@ LevelManager::~LevelManager()
 
 void LevelManager::loadLevelResource(int dt)
 {
-    for (auto iter = m_enemies.begin();
-         iter != m_enemies.end(); ++iter) {
-        if (iter->showType == "Repeate") {
-            if (dt % iter->showTime == 0) {
-                // 数组长度
-                for (int i = 0; i != 3; ++i) {
-                    addEnemyToGameLayer(iter->types[i]);
-                }
-            }
-        }
-    }
+//    for (auto iter = m_enemies.begin();
+//         iter != m_enemies.end(); ++iter) {
+//        if (iter->showType == "Repeate") {
+//            if (dt % iter->showTime == 0) {
+//                // 数组长度
+//                for (int i = 0; i != 3; ++i) {
+//                    addEnemyToGameLayer(iter->types[i]);
+//                }
+//            }
+//        }
+//    }
+    addEnemyToGameLayer(1);
 }
 
 
