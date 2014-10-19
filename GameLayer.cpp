@@ -5,10 +5,10 @@
 
 #include "GameLayer.h"
 #include "SimpleAudioEngine.h"
-//#include "Bullet.h"
+#include "Bullet.h"
 #include "Resource.h"
 #include "Config.h"
-//#include "Enemy.h"
+#include "Enemy.h"
 //#include "Effect.h"
 //#include "GameOver.h"
 //#include "PauseLayer.h"
@@ -39,13 +39,13 @@ GameLayer::GameLayer():
 }
 GameLayer::~GameLayer()
 {
-//    if (m_levelManager) {
-//        delete m_levelManager;
-//    }
+    if (m_levelManager) {
+        delete m_levelManager;
+    }
     
-//    play_bullet->release();
-//    enemy_bullet->release();
-//    enemy_items->release();
+    play_bullet->release();
+    enemy_bullet->release();
+    enemy_items->release();
 }
 
 bool GameLayer::init()
@@ -68,13 +68,13 @@ bool GameLayer::init()
     
     m_state = Playing;
     
-//    Enemy::sharedEnemy();
+    Enemy::sharedEnemy();
 //    Effect::sharedExplosion();
     
-//    Config::sharedConfig()->resetConfig();
+    Config::sharedConfig()->resetConfig();
     
     winSize = Director::getInstance()->getWinSize();
-//    m_levelManager = new LevelManager(this);
+    m_levelManager = new LevelManager(this);
     
     //初始化背景
     initBackground();
@@ -122,7 +122,7 @@ bool GameLayer::init()
     scheduleUpdate();
     
     // 每秒调一次 scoreCounter函数
-    //schedule(schedule_selector(GameLayer::scoreCounter), 1);
+    schedule(schedule_selector(GameLayer::scoreCounter), 1);
     
     if (Config::sharedConfig()->getAudioState()) {
         SimpleAudioEngine::getInstance()->playBackgroundMusic(s_bgMusic, true);
@@ -148,13 +148,13 @@ void GameLayer::update(float dt)
     
 }
 
-//void GameLayer::scoreCounter()
-//{
-//    if (m_state == Playing) {
-//        m_time++;
-//        m_levelManager->loadLevelResource(m_time);
-//    }
-//}
+void GameLayer::scoreCounter(float)
+{
+    if (m_state == Playing) {
+        m_time++;
+        m_levelManager->loadLevelResource(m_time);
+    }
+}
 
 void GameLayer::checkIsCollide()
 {
@@ -214,7 +214,7 @@ void GameLayer::removeInactiveUnit(float dt)
         if (selChild) {
             selChild->update(dt);
             int tag = selChild->getTag();
-            if (( tag == 900) || (tag == 901 )|| (tag == 1000)) {
+            if (/*(tag == 900) ||*/ (tag == Bullet::Tag )|| (tag == Enemy::Tag)) {
                 if (!((UnitSprite*)selChild)->isActive()) {
                     ((UnitSprite*)selChild)->destroy();
                 }
@@ -233,7 +233,8 @@ void GameLayer::removeInactiveUnit(float dt)
 
 void GameLayer::checkIsReborn()
 {    
-    if (Config::sharedConfig()->getLifeCount() > 0) {
+    if (1) { // debug
+//    if (Config::sharedConfig()->getLifeCount() > 0) {
         if (!m_ship) {
             m_ship = Ship::create();
             this->addChild(m_ship, m_ship->getZoder(), 1001);
@@ -277,21 +278,6 @@ void GameLayer::updateUI()
     
 }
 
-//void GameLayer::onEnter()
-//{
-//    CCDirector* pDirector = CCDirector::sharedDirector();
-//    pDirector->addTargetedDelegate(this, 0, true);
-//    Layer::onEnter();
-//}
-//
-//void GameLayer::onExit()
-//{
-////    CCDirector* pDirector = CCDirector::sharedDirector();
-////    pDirector->getTouchDispatcher()->removeDelegate(this);
-//    Layer::onExit();
-//}
-//
-//
 bool GameLayer::TouchBegan(Touch *touch, Event *event)
 {
     log("touch began!");
@@ -337,8 +323,8 @@ void GameLayer::initBackground()
 // 这里就是视差背景了
 void GameLayer::movingBackground(float)
 {
-    m_backSky->runAction(CCMoveBy::create(3, Vec2(0, -48)));
-    m_backTileMap->runAction(CCMoveBy::create(3, Vec2(0, -200)));
+    m_backSky->runAction(MoveBy::create(3, Vec2(0, -48)));
+    m_backTileMap->runAction(MoveBy::create(3, Vec2(0, -200)));
     
     // 每次移动48
     m_backSkyHeight -= 48;
@@ -363,7 +349,7 @@ void GameLayer::movingBackground(float)
             m_isBackSkyReload = true;
         }
         // 第二张图紧接着第一张图滚动
-        m_backSkyRe->runAction(CCMoveBy::create(3, Vec2(0, -48)));
+        m_backSkyRe->runAction(MoveBy::create(3, Vec2(0, -48)));
     }
     
     // 第一张图完全经过屏幕
@@ -389,7 +375,7 @@ void GameLayer::movingBackground(float)
             m_backTileMapRe->setPosition(0, winSize.y);
             m_isBackTileReload = true;
         }
-        m_backTileMapRe->runAction(CCMoveBy::create(3, Vec2(0, -200)));
+        m_backTileMapRe->runAction(MoveBy::create(3, Vec2(0, -200)));
     }
     
     if (m_backTileMapHeight <= 0) {
@@ -416,7 +402,7 @@ void GameLayer::doPause(Ref *pSender)
 //    addChild(pauseLayer,9999);
 }
 
-/*Ship* GameLayer::getShip()
+Ship* GameLayer::getShip()
 {
     return m_ship;
-}*/
+}

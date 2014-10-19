@@ -24,6 +24,7 @@ private:
 public:
     bool m_active;
     int m_zorder;
+    const static int Tag = 901;
     Bullet();
     Bullet(int speed, const char* weapon , int attackMode);
     virtual bool init();

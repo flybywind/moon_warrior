@@ -2,7 +2,6 @@
 //  Config.cpp
 //  MoonWarriorsx
 //
-//  Created by 王 磊 on 13-1-14.
 //
 //
 
@@ -44,7 +43,7 @@ Config::Config():m_scoreValue(0),m_life(3),m_isAudioOn(true)
     enemyType.textureName = "E1.png";
     enemyType.bulletType = "W2.png";
     enemyType.hp = 2;
-    enemyType.moveType = 0;
+    enemyType.moveType = 1;
     enemyType.scoreValue = 40;
     m_enemyTypes.push_back(enemyType);
     
@@ -68,7 +67,7 @@ Config::Config():m_scoreValue(0),m_life(3),m_isAudioOn(true)
     enemyType.textureName = "E4.png";
     enemyType.bulletType = "W2.png";
     enemyType.hp = 10;
-    enemyType.moveType = 2;
+    enemyType.moveType = 0;
     enemyType.scoreValue = 150;
     m_enemyTypes.push_back(enemyType);
     

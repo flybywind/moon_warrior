@@ -11,7 +11,7 @@
 
 #include "cocos2d.h"
 #include "Ship.h"
-//#include "LevelManager.h"
+#include "LevelManager.h"
 
 USING_NS_CC;
 
@@ -39,7 +39,7 @@ private:
     LabelBMFont *m_lbScore;
     LabelTTF *m_lifeCount;
     cocos2d::Rect m_screenRec;
-//    LevelManager *m_levelManager;
+    LevelManager *m_levelManager;
     
     bool m_isBackSkyReload;
     bool m_isBackTileReload;
@@ -51,7 +51,7 @@ public:
     ~GameLayer();
     virtual bool init();
     virtual void update(float dt);
-    void scoreCounter();
+    void scoreCounter(float);
     Ship* getShip();
     void checkIsCollide();
     void removeInactiveUnit(float dt);
@@ -60,8 +60,6 @@ public:
     void updateUI();
     void gameOver();
     void doPause(cocos2d::Ref *pSender);
-//    virtual void onEnter();
-//    virtual void onExit();
     void initBackground();
     void movingBackground(float);
     virtual bool TouchBegan(Touch* touch, Event* event);

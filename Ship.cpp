@@ -119,7 +119,7 @@ void Ship::shoot(float dt)
     if (bullet_a) {
         bullet_a->autorelease();
         play_bullet->addObject(bullet_a);
-        this->getParent()->addChild(bullet_a, bullet_a->m_zorder, 901);
+        this->getParent()->addChild(bullet_a, bullet_a->m_zorder);
         bullet_a->setPosition(Vec2(position.x + offset,
                                    position.y + 3 + contentSize.height * 0.3));
 
@@ -133,7 +133,7 @@ void Ship::shoot(float dt)
     if (bullet_b) {
         bullet_b->autorelease();
         play_bullet->addObject(bullet_b);
-        this->getParent()->addChild(bullet_b, bullet_b->m_zorder, 901);
+        this->getParent()->addChild(bullet_b, bullet_b->m_zorder);
         bullet_b->setPosition(Vec2(position.x - offset,
                                    position.y + 3 + contentSize.height * 0.3));
     }else{
@@ -171,7 +171,7 @@ void Ship::destroy()
 
 }
 
-CCRect Ship::collideRect()
+Rect Ship::collideRect()
 {
     Vec2 pos = getPosition();
     Size cs = getContentSize();

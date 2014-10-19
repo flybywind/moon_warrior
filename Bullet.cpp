@@ -29,7 +29,7 @@ Bullet::Bullet(int speed, const char *weapon, int attactMode)
     this->initWithSpriteFrameName(weapon);
     BlendFunc cbl = {GL_SRC_ALPHA, GL_ONE};
     this->setBlendFunc(cbl);
-
+    setTag(Bullet::Tag);
 }
 
 void Bullet::update(float dt)
@@ -68,7 +68,6 @@ void Bullet::destroy()
     enemy_bullet->removeObject(this);
     this->removeFromParent();
     
-//    CallFuncN *removeExplode =  CallFuncN::create(explode, callfuncN_selector(Bullet::removeExplode));
     CallFunc *removeExplode =  CallFunc::create(CC_CALLBACK_0(
                                     Bullet::removeExplode, this, explode));
     explode->runAction(ScaleBy::create(0.3, 2, 2));
